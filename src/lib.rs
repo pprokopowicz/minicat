@@ -16,19 +16,23 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
     let contents = fs::read_to_string(args.file)?;
 
-    if args.number_nonblank {
-        print_nonblank_number(contents)
-    } else if args.number {
-        print_number(contents)
-    } else {
-        println!("{}", contents);
-    }
+    let result = {
+        if args.number_nonblank {
+            nonblank_numbered(contents)
+        } else if args.number {
+            numbered(contents)
+        } else {
+            contents
+        }
+    };
+
+    println!("{}", result);
 
     Ok(())
 }
 
-fn print_number(contents: String) {
-    let numbered_contents: String = contents
+fn numbered(contents: String) -> String {
+    contents
         .lines()
         .enumerate()
         .map(|element| {
@@ -37,14 +41,12 @@ fn print_number(contents: String) {
             format!("     {}  {}", number, line)
         })
         .collect::<Vec<String>>()
-        .join("\n");
-
-    println!("{}", numbered_contents)
+        .join("\n")
 }
 
-fn print_nonblank_number(contents: String) {
+fn nonblank_numbered(contents: String) -> String {
     let mut current_line: usize = 1;
-    let numbered_contents: String = contents
+    contents
         .lines()
         .map(|line| {
             let result = match line.is_empty() {
@@ -53,13 +55,11 @@ fn print_nonblank_number(contents: String) {
                     let number = current_line.to_string();
                     current_line += 1;
                     format!("     {}  {}", number, line)
-                },
+                }
             };
 
             result
         })
         .collect::<Vec<String>>()
-        .join("\n");
-
-    println!("{}", numbered_contents)
+        .join("\n")
 }
