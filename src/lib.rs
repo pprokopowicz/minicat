@@ -24,7 +24,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 }
 
 fn print_lines(contents: String) {
-    let test: Vec<String> = contents
+    let contents_lines: String = contents
         .lines()
         .enumerate()
         .map(|element| {
@@ -32,7 +32,8 @@ fn print_lines(contents: String) {
             let line = element.1;
             format!("     {}  {}", number, line)
         })
-        .collect();
+        .collect::<Vec<String>>()
+        .join("\n");
 
-    println!("{}", test.join("\n"))
+    println!("{}", contents_lines)
 }
