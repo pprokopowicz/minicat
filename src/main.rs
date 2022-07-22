@@ -1,3 +1,9 @@
+use std::{process};
+
 fn main() {
-    println!("Hello, world!");
+    if let Err(e) = minicat::run() {
+        eprintln!("Application error: {}", e);
+
+        process::exit(1);
+    }
 }
