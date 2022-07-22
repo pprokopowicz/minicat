@@ -4,6 +4,8 @@ use std::{error::Error, fs};
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
+    #[clap(short = 'b', long)]
+    number_nonblank: bool,
     #[clap(short, long)]
     number: bool,
     #[clap(value_parser)]
@@ -14,8 +16,10 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
     let contents = fs::read_to_string(args.file)?;
 
-    if args.number {
-        print_lines(contents)
+    if args.number_nonblank {
+        print_nonblank_number(contents)
+    } else if args.number {
+        print_number(contents)
     } else {
         println!("{}", contents);
     }
@@ -23,8 +27,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn print_lines(contents: String) {
-    let contents_lines: String = contents
+fn print_number(contents: String) {
+    let numbered_contents: String = contents
         .lines()
         .enumerate()
         .map(|element| {
@@ -35,5 +39,27 @@ fn print_lines(contents: String) {
         .collect::<Vec<String>>()
         .join("\n");
 
-    println!("{}", contents_lines)
+    println!("{}", numbered_contents)
+}
+
+fn print_nonblank_number(contents: String) {
+    let mut current_line: usize = 1;
+    let numbered_contents: String = contents
+        .lines()
+        .map(|line| {
+            let result = match line.is_empty() {
+                true => line.to_string(),
+                false => {
+                    let number = current_line.to_string();
+                    current_line += 1;
+                    format!("     {}  {}", number, line)
+                },
+            };
+
+            result
+        })
+        .collect::<Vec<String>>()
+        .join("\n");
+
+    println!("{}", numbered_contents)
 }
