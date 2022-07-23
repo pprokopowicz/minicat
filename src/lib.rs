@@ -18,9 +18,9 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     let result = {
         if args.number_nonblank {
-            nonblank_numbered(contents)
+            nonblank_numbered(&contents)
         } else if args.number {
-            numbered(contents)
+            numbered_lines(&contents)
         } else {
             contents
         }
@@ -31,7 +31,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn numbered(contents: String) -> String {
+fn numbered_lines(contents: &str) -> String {
     contents
         .lines()
         .enumerate()
@@ -44,7 +44,7 @@ fn numbered(contents: String) -> String {
         .join("\n")
 }
 
-fn nonblank_numbered(contents: String) -> String {
+fn nonblank_numbered(contents: &str) -> String {
     let mut current_line: usize = 1;
     contents
         .lines()
@@ -62,4 +62,45 @@ fn nonblank_numbered(contents: String) -> String {
         })
         .collect::<Vec<String>>()
         .join("\n")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn numbered() {
+        let contents = "\
+Lorem ipsum dolor sit amet
+consectetur adipiscing elit
+Vestibulum sit amet tellus efficitur";
+
+        let expected = "\
+\u{20}    1  Lorem ipsum dolor sit amet
+\u{20}    2  consectetur adipiscing elit
+\u{20}    3  Vestibulum sit amet tellus efficitur";
+
+        assert_eq!(expected, numbered_lines(contents));
+    }
+
+    #[test]
+    fn numbered_empty_line() {
+        let contents = "\
+Lorem ipsum dolor sit amet
+
+
+consectetur adipiscing elit
+
+Vestibulum sit amet tellus efficitur";
+
+        let expected = "\
+\u{20}    1  Lorem ipsum dolor sit amet
+\u{20}    2\u{20}\u{20}
+\u{20}    3\u{20}\u{20}
+\u{20}    4  consectetur adipiscing elit
+\u{20}    5\u{20}\u{20}
+\u{20}    6  Vestibulum sit amet tellus efficitur";
+
+        assert_eq!(expected, numbered_lines(contents));
+    }
 }
