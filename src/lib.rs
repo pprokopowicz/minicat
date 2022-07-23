@@ -4,8 +4,10 @@ use std::{error::Error, fs};
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
+    /// Number non-blank output lines
     #[clap(short = 'b', long)]
     number_nonblank: bool,
+    /// Number all output lines
     #[clap(short, long)]
     number: bool,
     #[clap(value_parser)]
