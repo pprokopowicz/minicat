@@ -105,4 +105,60 @@ Vestibulum sit amet tellus efficitur";
 
         assert_eq!(expected, numbered_lines(contents));
     }
+    #[test]
+    fn nonblank() {
+        let contents = "\
+Lorem ipsum dolor sit amet
+
+
+consectetur adipiscing elit
+
+Vestibulum sit amet tellus efficitur";
+
+        let expected = "\
+\u{20}    1  Lorem ipsum dolor sit amet
+
+
+\u{20}    2  consectetur adipiscing elit
+
+\u{20}    3  Vestibulum sit amet tellus efficitur";
+
+        assert_eq!(expected, nonblank_numbered(contents));
+    }
+
+    #[test]
+    fn nonblank_space() {
+        let contents = "\
+Lorem ipsum dolor sit amet
+
+\u{20}
+consectetur adipiscing elit
+
+Vestibulum sit amet tellus efficitur";
+
+        let expected = "\
+\u{20}    1  Lorem ipsum dolor sit amet
+
+\u{20}    2   
+\u{20}    3  consectetur adipiscing elit
+
+\u{20}    4  Vestibulum sit amet tellus efficitur";
+
+        assert_eq!(expected, nonblank_numbered(contents));
+    }
+
+    #[test]
+    fn nonblank_no_new_line() {
+        let contents = "\
+Lorem ipsum dolor sit amet
+consectetur adipiscing elit
+Vestibulum sit amet tellus efficitur";
+
+        let expected = "\
+\u{20}    1  Lorem ipsum dolor sit amet
+\u{20}    2  consectetur adipiscing elit
+\u{20}    3  Vestibulum sit amet tellus efficitur";
+
+        assert_eq!(expected, nonblank_numbered(contents));
+    }
 }
